@@ -96,6 +96,7 @@ public class ServidorAjedrez extends Thread {
             }
             return;
         }
+
         if (mensaje.equals("PING")) {
             enviarMensaje("PONG", datagrama.getAddress(), datagrama.getPort());
             return;
@@ -130,7 +131,7 @@ public class ServidorAjedrez extends Thread {
             ? ColorPieza.NEGRO
             : ColorPieza.BLANCO;
 
-  // ===== RULETA (SOLO SERVIDOR) =====
+        // ===== RULETA (SOLO SERVIDOR) =====
         boolean daCarta = (turno == ColorPieza.BLANCO)
             ? ruleta.tickParaBlancas()
             : ruleta.tickParaNegras();
@@ -139,7 +140,7 @@ public class ServidorAjedrez extends Thread {
             ? ruleta.getRestanteBlancas()
             : ruleta.getRestanteNegras();
 
-   // enviar contador actualizado a ambos
+        // enviar contador actualizado a ambos
         enviarMensaje(
             "RULETA:" + turno + "," + restante,
             clientes[0].ip, clientes[0].puerto
@@ -173,15 +174,13 @@ public class ServidorAjedrez extends Thread {
     }
 
     private void desconectarCliente(Cliente c) {
-        if (c == clientes[0]) clientes[0] = null;
-        if (c == clientes[1]) clientes[1] = null;
+        System.out.println("[SERVER] Cliente desconectado: " + c);
 
-        // Reset del estado de partida
-        turno = ColorPieza.BLANCO;
-        ruleta.reset(); // ahora vemos esto
-
-        System.out.println("[SERVER] Cliente desconectado");
+        // si alguien se va → la partida muere
+        resetearPartida();
     }
+
+
 
 
     private void conectarNuevoCliente(DatagramPacket dp) {
@@ -245,6 +244,24 @@ public class ServidorAjedrez extends Thread {
     private boolean conexionEstablecida() {
         return clientes[0] != null && clientes[1] != null;
     }
+    private void resetearPartida() {
+        System.out.println("[SERVER] Reset total de partida");
+
+        // avisar a los clientes (si quedan)
+        for (Cliente c : clientes) {
+            if (c != null) {
+                enviarMensaje("RESET", c.ip, c.puerto);
+            }
+        }
+
+        clientes[0] = null;
+        clientes[1] = null;
+
+        turno = ColorPieza.BLANCO;
+        ruleta.reset();
+        partidaIniciada = false;
+    }
+
 
     private Cliente obtenerRemitente(DatagramPacket dp) {
         if (clientes[0] != null && clientes[0].esEste(dp)) return clientes[0];
