@@ -10,17 +10,16 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 /**
- * Servidor UDP para el ajedrez.
- * Basado en HiloServidor del ejercicio de chat:
- *  - Escucha en el puerto 4321 por UDP
- *  - Maneja hasta 2 clientes
- *  - Reenvía los mensajes de uno al otro.
- *
- * Para el juego:
- *  - Al conectar el primer cliente le asigna COLOR:BLANCO
- *  - Al conectar el segundo, COLOR:NEGRO
- *  - Cuando ambos están conectados, envía "Conexion establecida" a los dos.
- *  - Los mensajes que empiezan con "MOVE:" se reenvían tal cual al otro jugador.
+        Servidor UDP para el ajedrez.
+        Escucha en el puerto 4321 por UDP
+       Maneja hasta 2 clientes
+        Reenvía los mensajes de uno al otro.
+
+       Para el juego:
+       Al conectar el primer cliente le asigna COLOR:BLANCO
+       Al conectar el segundo, COLOR:NEGRO
+       Cuando ambos están conectados, envía "Conexion establecida" a los dos.
+      Los mensajes que empiezan con "MOVE:" se reenvían tal cual al otro jugador.
  */
 public class ServidorAjedrez extends Thread {
 
@@ -77,7 +76,7 @@ public class ServidorAjedrez extends Thread {
             System.out.println("[SERVER] " + datagrama.getSocketAddress() + " -> " + mensaje);
         }
 
-        // Discovery por broadcast
+        //por broadcast
         if (mensaje.equals("BUSCAR")) {
             enviarMensaje("ENCONTRAR", datagrama.getAddress(), datagrama.getPort());
             return;
@@ -124,13 +123,13 @@ public class ServidorAjedrez extends Thread {
         Cliente destino = obtenerOtro(emisor);
 
         // Para ajedrez nos interesa reenviar el mensaje TAL CUAL
-        // (especialmente los "MOVE:x1,y1,x2,y2")
+        //
         enviarMensaje(mensaje, destino.ip, destino.puerto);
         turno = (turno == ColorPieza.BLANCO)
             ? ColorPieza.NEGRO
             : ColorPieza.BLANCO;
 
-        // ===== RULETA (SOLO SERVIDOR) =====
+        //RULETA (SOLO SERVIDOR)
         boolean daCarta = (turno == ColorPieza.BLANCO)
             ? ruleta.tickParaBlancas()
             : ruleta.tickParaNegras();
@@ -175,7 +174,7 @@ public class ServidorAjedrez extends Thread {
     private void desconectarCliente(Cliente c) {
         System.out.println("[SERVER] Cliente desconectado: " + c);
 
-        // si alguien se va → la partida muere
+        // si alguien se va la partida muere
         resetearPartida();
     }
 
@@ -211,7 +210,7 @@ public class ServidorAjedrez extends Thread {
             System.out.println("[SERVER] NEGRAS conectado");
         }
 
-        // si ya están los dos → iniciar partida
+        // si ya están los dos entonces iniciar partida
         if (clientes[0] != null && clientes[1] != null) {
             enviarMensaje("Conexion establecida", clientes[0].ip, clientes[0].puerto);
             enviarMensaje("Conexion establecida", clientes[1].ip, clientes[1].puerto);
@@ -238,11 +237,6 @@ public class ServidorAjedrez extends Thread {
         return -1; // no hay lugar
     }
 
-
-
-    private boolean conexionEstablecida() {
-        return clientes[0] != null && clientes[1] != null;
-    }
     private void resetearPartida() {
         System.out.println("[SERVER] Reset total de partida");
 
@@ -284,7 +278,6 @@ public class ServidorAjedrez extends Thread {
         }
     }
 
-    // ===================
 
     private static class Cliente {
         InetAddress ip;

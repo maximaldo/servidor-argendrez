@@ -2,7 +2,6 @@ package Principal.juego.variantes.cartas;
 
 import java.util.Random;
 
-/** Ruleta con contadores independientes por color. */
 public class Ruleta {
 
     private static final int INTERVALO = 5; // cada 5 turnos PROPIOS roba una carta
@@ -12,14 +11,14 @@ public class Ruleta {
     private int pasosBlancas = INTERVALO;
     private int pasosNegras  = INTERVALO;
 
-    /** Llamar cuando COMIENZA el turno de BLANCAS. */
+    // Llamar cuando COMIENZA el turno de BLANCAS.
     public boolean tickParaBlancas() {
         pasosBlancas--;
         if (pasosBlancas <= 0) { pasosBlancas = INTERVALO; return true; }
         return false;
     }
 
-    /** Llamar cuando COMIENZA el turno de NEGRAS. */
+    // Llamar cuando COMIENZA el turno de NEGRAS.
     public boolean tickParaNegras() {
         pasosNegras--;
         if (pasosNegras <= 0) { pasosNegras = INTERVALO; return true; }
