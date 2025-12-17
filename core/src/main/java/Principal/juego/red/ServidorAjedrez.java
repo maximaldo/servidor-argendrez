@@ -13,7 +13,6 @@ import java.net.SocketException;
  * Servidor UDP para el ajedrez.
  * Basado en HiloServidor del ejercicio de chat:
  *  - Escucha en el puerto 4321 por UDP
- *  - Responde a "Hello_there" con "General_Kenobi"
  *  - Maneja hasta 2 clientes
  *  - Reenvía los mensajes de uno al otro.
  *
